@@ -1,0 +1,45 @@
+{
+  "name": "hilitech-api-gateway",
+  "version": "1.0.0",
+  "description": "API Gateway for the Hilitech microservices.",
+  "type": "module",
+  "private": true,
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "check": "tsc --noEmit"
+  },
+  "keywords": [
+    "api-gateway",
+    "microservices",
+    "express",
+    "typescript",
+    "hilitech"
+  ],
+  "author": "John Dave Camarin",
+  "license": "ISC",
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "http-proxy-middleware": "^3.0.5",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.9",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^24.3.0",
+    "rimraf": "^6.0.1",
+    "tsx": "^4.22.4",
+    "typescript": "^5.9.2"
+  }
+}
