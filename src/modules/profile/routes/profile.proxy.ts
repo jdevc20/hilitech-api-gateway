@@ -1,10 +1,6 @@
-import { createProxyMiddleware } from "http-proxy-middleware";
-import { env } from "../../../../src/configurations/env.js";
-import pingProxy from "../../ping/routes/ping.proxy.js";
+import { env } from "../../../configurations/env.js";
+import { createServiceProxy } from "../../../configurations/proxy.js";
 
-const profileProxy = createProxyMiddleware({
-  target: env.profileServiceUrl,
-  changeOrigin: true,
-});
+const profileProxy = createServiceProxy(env.profileServiceUrl);
 
 export default profileProxy;

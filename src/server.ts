@@ -1,73 +1,37 @@
 import { app } from "./app.js";
 import { env } from "./configurations/env.js";
 
-/**
- * Starts the API Gateway.
- */
-const bootstrap = async () => {
+const port = env.port;
 
-    try {
+const server = app.listen(port, () => {
+  console.log(`[Gateway] Running on port ${port}`);
+  console.log(`[Gateway] Environment: ${env.nodeEnv}`);
+});
 
-        const port = env.port || 3000;
+server.on("error", (error: NodeJS.ErrnoException) => {
+  if (error.code === "EADDRINUSE") {
+    console.error(`[CRITICAL] Port ${port} is already in use.`);
+  } else {
+    console.error("[CRITICAL] Failed to start gateway:", error);
+  }
 
-        const server = app.listen(port, () => {
+  process.exit(1);
+});
 
-            console.log(`[Gateway] 🚀 Running on port ${port}`);
+const gracefulShutdown = (signal: NodeJS.Signals) => {
+  console.log(`\nReceived ${signal}. Closing gateway...`);
 
-            console.log(`[Gateway] Environment: ${env.nodeEnv}`);
+  const shutdownTimer = setTimeout(() => {
+    console.error("[Gateway] Forced shutdown.");
+    process.exit(1);
+  }, 10_000);
 
-        });
-
-        server.on("error", (error: NodeJS.ErrnoException) => {
-
-            if (error.code === "EADDRINUSE") {
-
-                console.error(`[CRITICAL] Port ${port} is already in use.`);
-
-            } else {
-
-                console.error("[CRITICAL] Failed to start gateway:", error);
-
-            }
-
-            process.exit(1);
-
-        });
-
-        const gracefulShutdown = (signal: NodeJS.Signals) => {
-
-            console.log(`\nReceived ${signal}. Closing Gateway...`);
-
-            server.close(() => {
-
-                console.log("[Gateway] Closed.");
-
-                process.exit(0);
-
-            });
-
-            setTimeout(() => {
-
-                console.error("[Gateway] Forced shutdown.");
-
-                process.exit(1);
-
-            }, 10000);
-
-        };
-
-        process.on("SIGINT", gracefulShutdown);
-
-        process.on("SIGTERM", gracefulShutdown);
-
-    } catch (error) {
-
-        console.error("[CRITICAL]", error);
-
-        process.exit(1);
-
-    }
-
+  server.close(() => {
+    clearTimeout(shutdownTimer);
+    console.log("[Gateway] Closed.");
+    process.exit(0);
+  });
 };
 
-bootstrap();
+process.once("SIGINT", gracefulShutdown);
+process.once("SIGTERM", gracefulShutdown);
