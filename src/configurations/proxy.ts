@@ -1,5 +1,3 @@
-import type { IncomingMessage, ServerResponse } from "node:http";
-
 import { createProxyMiddleware } from "http-proxy-middleware";
 
 export function createServiceProxy(target: string) {
@@ -9,7 +7,11 @@ export function createServiceProxy(target: string) {
     timeout: 15_000,
     proxyTimeout: 15_000,
     on: {
-      error(_error, _req, res: ServerResponse<IncomingMessage>) {
+      error(_error, _req, res) {
+        if (!("writeHead" in res)) {
+          return;
+        }
+
         if (res.headersSent) {
           return;
         }

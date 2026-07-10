@@ -28,14 +28,17 @@ function parsePort(value: string | undefined): number {
   const port = Number(value ?? 3000);
 
   if (!Number.isInteger(port) || port < 1 || port > 65535) {
-    throw new Error("Invalid environment variable: PORT must be a valid TCP port.");
+    throw new Error(
+      "Invalid environment variable: PORT must be a valid TCP port."
+    );
   }
 
   return port;
 }
 
 function parseOrigins(value: string | undefined): string[] {
-  const fallback = "https://hilitech-user-manager.onrender.com";
+  const fallback = "http://localhost:5000";
+
   const origins = (value ?? fallback)
     .split(",")
     .map((origin) => origin.trim())
@@ -49,7 +52,9 @@ function parseOrigins(value: string | undefined): string[] {
     try {
       new URL(origin);
     } catch {
-      throw new Error(`Invalid URL in environment variable: CORS_ORIGINS (${origin})`);
+      throw new Error(
+        `Invalid URL in environment variable: CORS_ORIGINS (${origin})`
+      );
     }
   }
 
@@ -63,9 +68,9 @@ export const env = {
 
   corsOrigins: parseOrigins(process.env.CORS_ORIGINS),
 
-  authServiceUrl: requiredUrl("AUTH_SERVICE"),
+  authServiceUrl: requiredUrl("AUTH_SERVICE_URL"),
 
-  profileServiceUrl: requiredUrl("PROFILE_SERVICE"),
+  profileServiceUrl: requiredUrl("PROFILE_SERVICE_URL"),
 
-  pingServiceUrl: requiredUrl("PING_SERVICE"),
+  pingServiceUrl: requiredUrl("PING_SERVICE_URL"),
 };

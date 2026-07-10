@@ -7,11 +7,48 @@ function required(name) {
     }
     return value;
 }
+function requiredUrl(name) {
+    const value = required(name);
+    try {
+        new URL(value);
+    }
+    catch {
+        throw new Error(`Invalid URL in environment variable: ${name}`);
+    }
+    return value;
+}
+function parsePort(value) {
+    const port = Number(value ?? 3000);
+    if (!Number.isInteger(port) || port < 1 || port > 65535) {
+        throw new Error("Invalid environment variable: PORT must be a valid TCP port.");
+    }
+    return port;
+}
+function parseOrigins(value) {
+    const fallback = "http://localhost:5000";
+    const origins = (value ?? fallback)
+        .split(",")
+        .map((origin) => origin.trim())
+        .filter(Boolean);
+    if (origins.length === 0) {
+        return [fallback];
+    }
+    for (const origin of origins) {
+        try {
+            new URL(origin);
+        }
+        catch {
+            throw new Error(`Invalid URL in environment variable: CORS_ORIGINS (${origin})`);
+        }
+    }
+    return origins;
+}
 export const env = {
     nodeEnv: process.env.NODE_ENV ?? "development",
-    port: Number(process.env.PORT ?? 3000),
-    authServiceUrl: required("AUTH_SERVICE_URL"),
-    profileServiceUrl: required("PROFILE_SERVICE_URL"),
-    pingServiceUrl: required("PING_SERVICE_URL"),
+    port: parsePort(process.env.PORT),
+    corsOrigins: parseOrigins(process.env.CORS_ORIGINS),
+    authServiceUrl: requiredUrl("AUTH_SERVICE_URL"),
+    profileServiceUrl: requiredUrl("PROFILE_SERVICE_URL"),
+    pingServiceUrl: requiredUrl("PING_SERVICE_URL"),
 };
 //# sourceMappingURL=env.js.map

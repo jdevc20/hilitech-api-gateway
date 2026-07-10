@@ -1,8 +1,5 @@
-import { createProxyMiddleware } from "http-proxy-middleware";
-import { env } from "../../../../src/configurations/env.js";
-const profileProxy = createProxyMiddleware({
-    target: env.profileServiceUrl,
-    changeOrigin: true,
-});
+import { env } from "../../../configurations/env.js";
+import { createServiceProxy } from "../../../configurations/proxy.js";
+const profileProxy = createServiceProxy(env.profileServiceUrl);
 export default profileProxy;
 //# sourceMappingURL=profile.proxy.js.map

@@ -2,10 +2,11 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
-const cookieParser = require("cookie-parser");
+import cookieParser from "cookie-parser";
 import authProxy from "./modules/auth/routes/auth.proxy.js";
 import profileProxy from "./modules/profile/routes/profile.proxy.js";
 import pingProxy from "./modules/ping/routes/ping.proxy.js";
+import { env } from "./configurations/env.js";
 export const app = express();
 /**
  * =========================
@@ -13,7 +14,7 @@ export const app = express();
  * =========================
  */
 const allowedOrigins = new Set([
-    "https://hilitech-user-manager.onrender.com"
+    ...env.corsOrigins
 ]);
 const corsOptions = {
     origin: (origin, callback) => {
@@ -26,7 +27,7 @@ const corsOptions = {
         if (isLocalhost || isAllowedProd) {
             return callback(null, true);
         }
-        console.warn("❌ CORS blocked origin:", origin);
+        console.warn("[Gateway] CORS blocked origin:", origin);
         callback(null, false);
     },
     credentials: true
@@ -52,7 +53,7 @@ app.use(morgan("dev"));
 app.get("/health", (_, res) => {
     res.json({
         success: true,
-        message: "Tempo API Gateway is running."
+        message: "Hilitech API Gateway is running."
     });
 });
 /**
