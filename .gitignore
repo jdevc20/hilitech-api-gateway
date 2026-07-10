@@ -1,0 +1,71 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# TypeScript
+*.tsbuildinfo
+
+# Local databases only
+*.db
+*.db-journal
+
+# Do NOT ignore Prisma migrations
+# prisma/migrations/ must be committed
+
+# PostgreSQL / local database dumps
+*.sql
+*.dump
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Cache
+.cache/
+.tmp/
+temp/
+tmp/
+
+# Runtime files
+*.pid
+*.seed
+*.pid.lock
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Package manager
+.pnpm-store/
+.yarn/
+.yarn-cache/
+.yarn/install-state.gz
+
+# Docker optional
+docker-compose.override.yml
+
+# Test reports
+junit.xml
+test-results/
