@@ -14,7 +14,7 @@ export const app = express();
  * =========================
  */
 const allowedOrigins = new Set([
-    ...env.corsOrigins
+    ...env.corsOrigins,
 ]);
 const corsOptions = {
     origin: (origin, callback) => {
@@ -30,7 +30,7 @@ const corsOptions = {
         console.warn("[Gateway] CORS blocked origin:", origin);
         callback(null, false);
     },
-    credentials: true
+    credentials: true,
 };
 /**
  * =========================
@@ -40,20 +40,21 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(helmet({
     crossOriginResourcePolicy: false,
-    contentSecurityPolicy: false
+    contentSecurityPolicy: false,
 }));
-app.use(express.json());
 app.use(cookieParser());
+// IMPORTANT: Parse body BEFORE proxy so fixRequestBody works.
+app.use(express.json());
 app.use(morgan("dev"));
 /**
  * =========================
  * HEALTH CHECK
  * =========================
  */
-app.get("/health", (_, res) => {
+app.get("/health", (_req, res) => {
     res.json({
         success: true,
-        message: "Hilitech API Gateway is running."
+        message: "Hilitech API Gateway is running.",
     });
 });
 /**
@@ -74,7 +75,7 @@ app.use("/api", (req, res) => {
         success: false,
         message: "API route not found.",
         method: req.method,
-        path: req.originalUrl
+        path: req.originalUrl,
     });
 });
 //# sourceMappingURL=app.js.map

@@ -1,5 +1,11 @@
-import { env } from "../../../configurations/env.js";
+import { Router } from "express";
 import { createServiceProxy } from "../../../configurations/proxy.js";
-const authProxy = createServiceProxy(env.authServiceUrl);
-export default authProxy;
+import { env } from "../../../configurations/env.js";
+const router = Router();
+router.use("/", createServiceProxy(env.authServiceUrl, {
+    pathRewrite: {
+        "^/": "/api/auth/",
+    },
+}));
+export default router;
 //# sourceMappingURL=auth.proxy.js.map

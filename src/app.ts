@@ -18,32 +18,31 @@ export const app = express();
  */
 
 const allowedOrigins = new Set([
-    ...env.corsOrigins
+  ...env.corsOrigins,
 ]);
 
 const corsOptions: CorsOptions = {
-    origin: (origin, callback) => {
+  origin: (origin, callback) => {
+    if (!origin) {
+      return callback(null, true);
+    }
 
-        if (!origin) {
-            return callback(null, true);
-        }
+    const isLocalhost =
+      origin.startsWith("http://localhost") ||
+      origin.startsWith("http://127.0.0.1");
 
-        const isLocalhost =
-            origin.startsWith("http://localhost") ||
-            origin.startsWith("http://127.0.0.1");
+    const isAllowedProd = allowedOrigins.has(origin);
 
-        const isAllowedProd = allowedOrigins.has(origin);
+    if (isLocalhost || isAllowedProd) {
+      return callback(null, true);
+    }
 
-        if (isLocalhost || isAllowedProd) {
-            return callback(null, true);
-        }
+    console.warn("[Gateway] CORS blocked origin:", origin);
 
-        console.warn("[Gateway] CORS blocked origin:", origin);
+    callback(null, false);
+  },
 
-        callback(null, false);
-    },
-
-    credentials: true
+  credentials: true,
 };
 
 /**
@@ -55,15 +54,16 @@ const corsOptions: CorsOptions = {
 app.use(cors(corsOptions));
 
 app.use(
-    helmet({
-        crossOriginResourcePolicy: false,
-        contentSecurityPolicy: false
-    })
+  helmet({
+    crossOriginResourcePolicy: false,
+    contentSecurityPolicy: false,
+  })
 );
 
-app.use(express.json());
-
 app.use(cookieParser());
+
+// IMPORTANT: Parse body BEFORE proxy so fixRequestBody works.
+app.use(express.json());
 
 app.use(morgan("dev"));
 
@@ -73,13 +73,11 @@ app.use(morgan("dev"));
  * =========================
  */
 
-app.get("/health", (_, res) => {
-
-    res.json({
-        success: true,
-        message: "Hilitech API Gateway is running."
-    });
-
+app.get("/health", (_req, res) => {
+  res.json({
+    success: true,
+    message: "Hilitech API Gateway is running.",
+  });
 });
 
 /**
@@ -101,12 +99,10 @@ app.use("/api/ping", pingProxy);
  */
 
 app.use("/api", (req, res) => {
-
-    res.status(404).json({
-        success: false,
-        message: "API route not found.",
-        method: req.method,
-        path: req.originalUrl
-    });
-
+  res.status(404).json({
+    success: false,
+    message: "API route not found.",
+    method: req.method,
+    path: req.originalUrl,
+  });
 });

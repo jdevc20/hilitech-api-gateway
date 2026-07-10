@@ -1,7 +1,16 @@
-import { createProxyMiddleware } from "http-proxy-middleware";
-import { env } from "../../../configurations/env.js";
+import { Router } from "express";
 import { createServiceProxy } from "../../../configurations/proxy.js";
+import { env } from "../../../configurations/env.js";
 
-const authProxy = createServiceProxy(env.authServiceUrl);
+const router = Router();
 
-export default authProxy;
+router.use(
+  "/",
+  createServiceProxy(env.authServiceUrl, {
+    pathRewrite: {
+      "^/": "/api/auth/",
+    },
+  })
+);
+
+export default router;
