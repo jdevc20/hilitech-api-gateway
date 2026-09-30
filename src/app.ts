@@ -12,6 +12,7 @@ import dashboardProxy from "./modules/auth/routes/dashboard.proxy.js";
 import profileProxy from "./modules/profile/routes/profile.proxy.js";
 import pingProxy from "./modules/ping/routes/ping.proxy.js";
 import { env } from "./configurations/env.js";
+import { httpBodyLogger } from "./middlewares/http-body-logger.js";
 
 import sessionsProxy from "./modules/auth/routes/sessions.proxy.js";
 
@@ -73,6 +74,9 @@ app.use(cookieParser());
 
 // IMPORTANT: Parse body BEFORE proxy so fixRequestBody works.
 app.use(express.json());
+
+// Capture parsed requests and both local/proxied response bodies.
+app.use(httpBodyLogger);
 
 app.use(morgan("dev"));
 
