@@ -43,22 +43,6 @@ export function createServiceProxy(
         console.log("Origin :", req.headers.origin ?? "-");
         console.log("IP     :", expressReq.ip ?? "-");
 
-        console.log("Headers:");
-        console.log({
-          "content-type": req.headers["content-type"],
-          authorization: req.headers.authorization,
-          cookie: req.headers.cookie,
-        });
-
-        if (
-          expressReq.body &&
-          typeof expressReq.body === "object" &&
-          Object.keys(expressReq.body).length > 0
-        ) {
-          console.log("Body:");
-          console.dir(expressReq.body, { depth: null });
-        }
-
         console.log("==================================================");
         console.log("");
       },

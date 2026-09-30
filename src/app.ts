@@ -5,9 +5,18 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 
 import authProxy from "./modules/auth/routes/auth.proxy.js";
+import accountProxy from "./modules/auth/routes/account.proxy.js";
+import tokenProxy from "./modules/auth/routes/token.proxy.js";
+import usersProxy from "./modules/auth/routes/users.proxy.js";
+import dashboardProxy from "./modules/auth/routes/dashboard.proxy.js";
 import profileProxy from "./modules/profile/routes/profile.proxy.js";
 import pingProxy from "./modules/ping/routes/ping.proxy.js";
 import { env } from "./configurations/env.js";
+
+import sessionsProxy from "./modules/auth/routes/sessions.proxy.js";
+
+import applicationsProxy from "./modules/auth/routes/applications.proxy.js";
+import registrationReportsProxy from "./modules/auth/routes/app-registration-reports.proxy.js";
 
 export const app = express();
 
@@ -87,6 +96,17 @@ app.get("/health", (_req, res) => {
  */
 
 app.use("/api/auth", authProxy);
+
+app.use("/api/token", tokenProxy);
+
+app.use("/api/account", accountProxy);
+
+app.use("/api/users", usersProxy);
+
+app.use("/api/dashboard", dashboardProxy);
+app.use("/api/applications", applicationsProxy);
+app.use("/api/app-registration-reports", registrationReportsProxy);
+app.use("/api/sessions", sessionsProxy);
 
 app.use("/api/profile", profileProxy);
 
