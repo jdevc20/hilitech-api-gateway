@@ -13,6 +13,8 @@ build/
 # Logs
 logs/
 *.log
+!src/modules/logs/
+!src/modules/logs/**
 npm-debug.log*
 yarn-debug.log*
 pnpm-debug.log*
@@ -31,6 +33,8 @@ lerna-debug.log*
 # PostgreSQL / local database dumps
 *.sql
 *.dump
+!database/migrations/
+!database/migrations/*.sql
 
 # Coverage
 coverage/
@@ -69,3 +73,5 @@ docker-compose.override.yml
 # Test reports
 junit.xml
 test-results/
+
+.env

@@ -15,6 +15,7 @@ import { requestLogMiddleware } from "./middlewares/request-log.middleware.js";
 import sessionsProxy from "./modules/auth/routes/sessions.proxy.js";
 import applicationsProxy from "./modules/auth/routes/applications.proxy.js";
 import registrationReportsProxy from "./modules/auth/routes/app-registration-reports.proxy.js";
+import requestLogsRoutes from "./modules/logs/routes/request-logs.routes.js";
 export const app = express();
 /**
  * =========================
@@ -80,6 +81,7 @@ app.use("/api/dashboard", dashboardProxy);
 app.use("/api/applications", applicationsProxy);
 app.use("/api/app-registration-reports", registrationReportsProxy);
 app.use("/api/sessions", sessionsProxy);
+app.use("/api/gateway-logs", requestLogsRoutes);
 app.use("/api/profile", profileProxy);
 app.use("/api/ping", pingProxy);
 /**
