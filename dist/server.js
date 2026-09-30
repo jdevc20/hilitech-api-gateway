@@ -1,5 +1,6 @@
 import { app } from "./app.js";
 import { env } from "./configurations/env.js";
+import { closeDatabase } from "./database/pool.js";
 const port = env.port;
 const server = app.listen(port, () => {
     console.log(`[Gateway] Running on port ${port}`);
@@ -20,10 +21,17 @@ const gracefulShutdown = (signal) => {
         console.error("[Gateway] Forced shutdown.");
         process.exit(1);
     }, 10_000);
-    server.close(() => {
+    server.close(async () => {
         clearTimeout(shutdownTimer);
-        console.log("[Gateway] Closed.");
-        process.exit(0);
+        try {
+            await closeDatabase();
+            console.log("[Gateway] Closed.");
+            process.exit(0);
+        }
+        catch (error) {
+            console.error("[Gateway] Failed to close database connections:", error);
+            process.exit(1);
+        }
     });
 };
 process.once("SIGINT", gracefulShutdown);

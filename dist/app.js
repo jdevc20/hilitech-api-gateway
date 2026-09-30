@@ -11,6 +11,7 @@ import dashboardProxy from "./modules/auth/routes/dashboard.proxy.js";
 import profileProxy from "./modules/profile/routes/profile.proxy.js";
 import pingProxy from "./modules/ping/routes/ping.proxy.js";
 import { env } from "./configurations/env.js";
+import { requestLogMiddleware } from "./middlewares/request-log.middleware.js";
 import sessionsProxy from "./modules/auth/routes/sessions.proxy.js";
 import applicationsProxy from "./modules/auth/routes/applications.proxy.js";
 import registrationReportsProxy from "./modules/auth/routes/app-registration-reports.proxy.js";
@@ -52,6 +53,8 @@ app.use(helmet({
 app.use(cookieParser());
 // IMPORTANT: Parse body BEFORE proxy so fixRequestBody works.
 app.use(express.json());
+// Persist redacted request and response bodies in PostgreSQL.
+app.use(requestLogMiddleware);
 app.use(morgan("dev"));
 /**
  * =========================

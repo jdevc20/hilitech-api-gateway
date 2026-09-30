@@ -36,6 +36,20 @@ function parsePort(value: string | undefined): number {
   return port;
 }
 
+function parsePositiveInteger(
+  name: string,
+  value: string | undefined,
+  fallback: number
+): number {
+  const parsed = Number(value ?? fallback);
+
+  if (!Number.isInteger(parsed) || parsed < 1) {
+    throw new Error(`Invalid environment variable: ${name} must be a positive integer.`);
+  }
+
+  return parsed;
+}
+
 function parseOrigins(value: string | undefined): string[] {
   const fallback = "http://localhost:5000";
 
@@ -65,6 +79,14 @@ export const env = {
   nodeEnv: process.env.NODE_ENV ?? "development",
 
   port: parsePort(process.env.PORT),
+
+  databaseUrl: required("DATABASE_URL"),
+
+  requestLogMaxBodyBytes: parsePositiveInteger(
+    "REQUEST_LOG_MAX_BODY_BYTES",
+    process.env.REQUEST_LOG_MAX_BODY_BYTES,
+    65_536
+  ),
 
   corsOrigins: parseOrigins(process.env.CORS_ORIGINS),
 

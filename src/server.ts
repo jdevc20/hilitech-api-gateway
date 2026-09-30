@@ -1,5 +1,6 @@
 import { app } from "./app.js";
 import { env } from "./configurations/env.js";
+import { closeDatabase } from "./database/pool.js";
 
 const port = env.port;
 
@@ -26,10 +27,17 @@ const gracefulShutdown = (signal: NodeJS.Signals) => {
     process.exit(1);
   }, 10_000);
 
-  server.close(() => {
+  server.close(async () => {
     clearTimeout(shutdownTimer);
-    console.log("[Gateway] Closed.");
-    process.exit(0);
+
+    try {
+      await closeDatabase();
+      console.log("[Gateway] Closed.");
+      process.exit(0);
+    } catch (error) {
+      console.error("[Gateway] Failed to close database connections:", error);
+      process.exit(1);
+    }
   });
 };
 

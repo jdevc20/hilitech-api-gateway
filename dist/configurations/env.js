@@ -24,6 +24,13 @@ function parsePort(value) {
     }
     return port;
 }
+function parsePositiveInteger(name, value, fallback) {
+    const parsed = Number(value ?? fallback);
+    if (!Number.isInteger(parsed) || parsed < 1) {
+        throw new Error(`Invalid environment variable: ${name} must be a positive integer.`);
+    }
+    return parsed;
+}
 function parseOrigins(value) {
     const fallback = "http://localhost:5000";
     const origins = (value ?? fallback)
@@ -46,6 +53,8 @@ function parseOrigins(value) {
 export const env = {
     nodeEnv: process.env.NODE_ENV ?? "development",
     port: parsePort(process.env.PORT),
+    databaseUrl: required("DATABASE_URL"),
+    requestLogMaxBodyBytes: parsePositiveInteger("REQUEST_LOG_MAX_BODY_BYTES", process.env.REQUEST_LOG_MAX_BODY_BYTES, 65_536),
     corsOrigins: parseOrigins(process.env.CORS_ORIGINS),
     authServiceUrl: requiredUrl("AUTH_SERVICE_URL"),
     profileServiceUrl: requiredUrl("PROFILE_SERVICE_URL"),
