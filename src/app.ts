@@ -13,6 +13,7 @@ import profileProxy from "./modules/profile/routes/profile.proxy.js";
 import pingProxy from "./modules/ping/routes/ping.proxy.js";
 import { env } from "./configurations/env.js";
 import { requestLogMiddleware } from "./middlewares/request-log.middleware.js";
+import { getServicesHealth } from "./services/health.service.js";
 
 import sessionsProxy from "./modules/auth/routes/sessions.proxy.js";
 
@@ -91,6 +92,30 @@ app.get("/health", (_req, res) => {
   res.json({
     success: true,
     message: "Hilitech API Gateway is running.",
+  });
+});
+
+app.get("/api/health", async (_req, res) => {
+  const checkedAt = new Date().toISOString();
+  const services = await getServicesHealth();
+  const allServicesHealthy = services.every((service) => service.status === "healthy");
+
+  res.json({
+    success: true,
+    data: {
+      status: allServicesHealthy ? "healthy" : "degraded",
+      checkedAt,
+      services: [
+        {
+          name: "api-gateway",
+          status: "healthy",
+          url: "/health",
+          responseTimeMs: 0,
+          statusCode: 200,
+        },
+        ...services,
+      ],
+    },
   });
 });
 
