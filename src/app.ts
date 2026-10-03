@@ -9,6 +9,7 @@ import accountProxy from "./modules/auth/routes/account.proxy.js";
 import tokenProxy from "./modules/auth/routes/token.proxy.js";
 import usersProxy from "./modules/auth/routes/users.proxy.js";
 import dashboardProxy from "./modules/auth/routes/dashboard.proxy.js";
+import setupProxy from "./modules/auth/routes/setup.proxy.js";
 import profileProxy from "./modules/profile/routes/profile.proxy.js";
 import pingProxy from "./modules/ping/routes/ping.proxy.js";
 import { env } from "./configurations/env.js";
@@ -78,6 +79,7 @@ app.use(cookieParser());
 app.use(express.json());
 
 // Persist redacted request and response bodies in PostgreSQL.
+// Setup passwords and returned tokens are covered by the existing redaction rules.
 app.use(requestLogMiddleware);
 
 app.use(morgan("dev"));
@@ -124,6 +126,8 @@ app.get("/api/health", async (_req, res) => {
  * PROXY ROUTES
  * =========================
  */
+
+app.use("/api/setup", setupProxy);
 
 app.use("/api/auth", authProxy);
 
